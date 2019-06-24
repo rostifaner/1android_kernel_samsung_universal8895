@@ -255,7 +255,7 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
 # Default value for CROSS_COMPILE is not to prefix executables
 # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
 ARCH		    ?= $(SUBARCH)
-CROSS_COMPILE	?= $(CCACHE) $BUILD_CROSS_COMPILE
+CROSS_COMPILE	?= $(CCACHE) $(CONFIG_CROSS_COMPILE:"%"=%)
 
 # Architecture as present in compile.h
 UTS_MACHINE 	:= $(ARCH)
@@ -835,6 +835,15 @@ KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
 
 # disable pointer signed / unsigned warnings in gcc 4.0
 KBUILD_CFLAGS += $(call cc-disable-warning, pointer-sign)
+
+# disable address-of-packed-member warnings in gcc 9+
+KBUILD_CFLAGS += $(call cc-disable-warning, address-of-packed-member)
+
+# disable werror=array-bounds warnings in gcc 9+
+KBUILD_CFLAGS  += $(call cc-disable-warning, array-bounds)
+
+# disable missing-attributes warnings in gcc 9+
+KBUILD_CFLAGS  += $(call cc-disable-warning, missing-attributes)
 
 # disable invalid "can't wrap" optimizations for signed / pointers
 KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
